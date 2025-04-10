@@ -1,3 +1,4 @@
+// index.js
 const express = require("express");
 const cors = require("cors");
 const pool = require("./db");
@@ -17,6 +18,7 @@ app.get("/api/prueba", (req, res) => {
 
 //==================== ESTUDIANTES ====================
 
+// Obtener todos los estudiantes
 app.get("/api/estudiantes", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM estudiantes");
@@ -27,6 +29,7 @@ app.get("/api/estudiantes", async (req, res) => {
   }
 });
 
+// Crear un estudiante
 app.post("/api/estudiantes", async (req, res) => {
   const { nombre, correo } = req.body;
   if (!nombre || !correo) {
@@ -45,6 +48,7 @@ app.post("/api/estudiantes", async (req, res) => {
   }
 });
 
+// Actualizar un estudiante
 app.put("/api/estudiantes/:id", async (req, res) => {
   const { id } = req.params;
   const { nombre, correo } = req.body;
@@ -70,10 +74,17 @@ app.put("/api/estudiantes/:id", async (req, res) => {
   }
 });
 
+// Eliminar un estudiante
 app.delete("/api/estudiantes/:id", async (req, res) => {
   const { id } = req.params;
+
   try {
-    await pool.query("DELETE FROM estudiantes WHERE id = $1", [id]);
+    const result = await pool.query("DELETE FROM estudiantes WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Estudiante no encontrado" });
+    }
+
     res.status(200).json({ message: `Estudiante con ID ${id} eliminado` });
   } catch (error) {
     console.error(error);
@@ -83,6 +94,7 @@ app.delete("/api/estudiantes/:id", async (req, res) => {
 
 //==================== CURSOS ====================
 
+// Obtener todos los cursos
 app.get("/api/cursos", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM cursos");
@@ -93,6 +105,7 @@ app.get("/api/cursos", async (req, res) => {
   }
 });
 
+// Crear curso
 app.post("/api/cursos", async (req, res) => {
   const { nombre, creditos } = req.body;
   if (!nombre || !creditos) {
@@ -111,6 +124,7 @@ app.post("/api/cursos", async (req, res) => {
   }
 });
 
+// Actualizar curso
 app.put("/api/cursos/:id", async (req, res) => {
   const { id } = req.params;
   const { nombre, creditos } = req.body;
@@ -136,10 +150,17 @@ app.put("/api/cursos/:id", async (req, res) => {
   }
 });
 
+// Eliminar curso
 app.delete("/api/cursos/:id", async (req, res) => {
   const { id } = req.params;
+
   try {
-    await pool.query("DELETE FROM cursos WHERE id = $1", [id]);
+    const result = await pool.query("DELETE FROM cursos WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Curso no encontrado" });
+    }
+
     res.status(200).json({ message: `Curso con ID ${id} eliminado` });
   } catch (error) {
     console.error(error);
@@ -149,6 +170,7 @@ app.delete("/api/cursos/:id", async (req, res) => {
 
 //==================== INSCRIPCIONES ====================
 
+// Obtener todas las inscripciones
 app.get("/api/inscripciones", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM inscripciones");
@@ -159,8 +181,10 @@ app.get("/api/inscripciones", async (req, res) => {
   }
 });
 
+// Crear inscripción
 app.post("/api/inscripciones", async (req, res) => {
   const { estudiante_id, curso_id, fecha_inscripcion } = req.body;
+
   if (!estudiante_id || !curso_id || !fecha_inscripcion) {
     return res.status(400).json({ message: "Todos los campos son obligatorios" });
   }
@@ -186,6 +210,7 @@ app.post("/api/inscripciones", async (req, res) => {
   }
 });
 
+// Actualizar inscripción
 app.put("/api/inscripciones/:id", async (req, res) => {
   const { id } = req.params;
   const { estudiante_id, curso_id, fecha_inscripcion } = req.body;
@@ -211,10 +236,17 @@ app.put("/api/inscripciones/:id", async (req, res) => {
   }
 });
 
+// Eliminar inscripción
 app.delete("/api/inscripciones/:id", async (req, res) => {
   const { id } = req.params;
+
   try {
-    await pool.query("DELETE FROM inscripciones WHERE id = $1", [id]);
+    const result = await pool.query("DELETE FROM inscripciones WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Inscripción no encontrada" });
+    }
+
     res.status(200).json({ message: `Inscripción con ID ${id} eliminada` });
   } catch (error) {
     console.error(error);
@@ -252,3 +284,4 @@ app.get("/api/inscripciones/detalles", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+

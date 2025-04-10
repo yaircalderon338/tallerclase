@@ -8,10 +8,11 @@ const pool = new Pool({
   password: '6noXo7R0MNUQhTmP',
   port: 5432,
   ssl: {
-    rejectUnauthorized: false
+    rejectUnauthorized: false // Necesario para conexiones seguras con Supabase
   }
 });
 
+// Verificación de la conexión
 pool.connect((err, client, release) => {
   if (err) {
     console.error('Error al conectar con Supabase:', err.stack);
@@ -21,5 +22,6 @@ pool.connect((err, client, release) => {
   }
 });
 
-module.exports = pool; // 👈 importante
+module.exports = pool;
+
 
